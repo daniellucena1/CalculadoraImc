@@ -10,9 +10,16 @@ export default function Form() {
     const [messageImc, setMessageImc] = useState('Preencha o peso e a altura');
     const [imc, setImc] = useState(null);
     const [textButton, setTextButton] = useState('calcular');
+    const [errorMessage, setErrorMessage] = useState(null);
 
     function imcCalculator() {
         return setImc((weight/(height*height)).toFixed(2));
+    }
+
+    function imcVerification() {
+        if (imc == null) {
+            setErrorMessage("Campo obrigatório*");
+        }
     }
 
     function imcValidator() {
@@ -22,15 +29,13 @@ export default function Form() {
             setWeight(null);
             setMessageImc("Seu IMC é igual a : ");
             setTextButton("Calcular Novamente");
+            setErrorMessage(null);
             return
         }
+        imcVerification();
         setImc(null);
         setTextButton("Calcular");
         setMessageImc("Preencha o peso e a altura");
-    }
-
-    function handleBlur() {
-        console.log("Textinput perdeu o foco");
     }
 
     return(
@@ -38,10 +43,10 @@ export default function Form() {
             <View style={styles.form}>
                 <Text style={styles.formLabel}>Altura</Text>
                 <TextInput style={styles.input} onChangeText={setHeight} value={height} placeholder='Qual a sua altura?' keyboardType='numeric'></TextInput>
-
+                <Text style={styles.errorMessage}>{errorMessage}</Text>
                 <Text style={styles.formLabel}>Peso</Text>
                 <TextInput style={styles.input} onChangeText={setWeight} value={weight} placeholder='Qual o seu peso?' keyboardType='numeric'></TextInput>
-
+                <Text style={styles.errorMessage}>{errorMessage}</Text>
                 <TouchableOpacity style={styles.buttonCalculator} onPress={() => {imcValidator()}}>
                     <Text style={styles.textButtonCalculator}>{textButton}</Text>
                 </TouchableOpacity>
