@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, View, Text, TouchableOpacity, Vibration, Keyboard, Pressable } from 'react-native';
+import { TextInput, View, Text, TouchableOpacity, Vibration, Keyboard, Pressable, FlatList } from 'react-native';
 import ResultImc from './ResultIMC/index';
 import styles from "./style";
 
@@ -11,10 +11,13 @@ export default function Form() {
     const [imc, setImc] = useState(null);
     const [textButton, setTextButton] = useState('calcular');
     const [errorMessage, setErrorMessage] = useState(null);
+    const [imcList, setImcList] = useState([]);
 
     function imcCalculator() {
         let heightFormat = height.replace(",",".");
-        return setImc((weight/(heightFormat*heightFormat)).toFixed(2));
+        let totalImc = (weight/(heightFormat*heightFormat)).toFixed(2);
+        setImcList((arr) => [...arr, {id: new Date().getTime(), imc: totalImc}]);
+        setImc(totalImc);
     }
 
     function imcVerification() {
@@ -54,7 +57,6 @@ export default function Form() {
                 <TouchableOpacity style={styles.buttonCalculator} onPress={() => {imcValidator()}}>
                     <Text style={styles.textButtonCalculator}>{textButton}</Text>
                 </TouchableOpacity>
-                <Text style={styles.errorMessage}>{messageImc}</Text>
             </Pressable>
             :
             <View style={styles.displayImc}>
@@ -64,6 +66,16 @@ export default function Form() {
                 </TouchableOpacity>
             </View>
             }
+            <FlatList showsVerticalScrollIndicator={false} style={styles.listImcs} data={imcList.reverse()} renderItem={({item}) => {
+                return(
+                    <Text style={styles.resultImcItem}>
+                        <Text style={styles.textResultItemList}>Resultado do Imc = </Text>
+                        {item.imc}
+                    </Text>
+                )
+            }} keyExtractor={(item) => {
+                item.id
+            }}/>
         </View>
     );
 }
